@@ -3,6 +3,10 @@
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
 
+RentalService rentalService = new();
+rentalService.BaseDailyRent = 55;
+rentalService.BasePricePerKm = 12;
+
 var car = Factory.CreateCar();
 car.SetLicensePlateNumber("ABC123");
 
@@ -27,7 +31,7 @@ rental.DropOffCar(dropOff, travelledKilometersAfterRent);
 // rental2.DropOffCar(dropOff2, travelledKilometersAfterRent + 10);
 // rental3.DropOffCar(dropOff3, travelledKilometersAfterRent + 397);
 
-var cost = CalculateRentalCost(rental);
+var cost = rentalService.CalculateRentalCost(rental);
 WriteLine($"Total cost Car: {cost}kr.");
 
 // var cost2 = CalculateRentalCost(rental2);
@@ -35,26 +39,3 @@ WriteLine($"Total cost Car: {cost}kr.");
 
 // var cost3 = CalculateRentalCost(rental3);
 // WriteLine($"Total cost Lastbil: {cost3}kr.");
-
-
-decimal CalculateRentalCost(IRental rental) // make static when used as handler func
-{
-    decimal baseDailyRent = 55; // move to handler class ?
-    decimal basePricePerKm = 12; // move to handler
-    const decimal stationWagonRate = 1.3M; // keep the rates with the cars?
-    const decimal truckRate = 1.5M;
-
-    decimal baseCost = baseDailyRent * rental.DaysRented;
-
-    decimal cost = rental.CarType switch
-    {
-        CarType.StationWagon => baseCost * stationWagonRate + basePricePerKm * rental.TotalKm,
-        CarType.Truck => baseCost * truckRate + basePricePerKm * rental.TotalKm * truckRate,
-        _ => baseCost, // default type is Car
-    };
-
-    WriteLine($"Antal dagar: {rental.DaysRented}");
-    WriteLine($"All the costs: {baseDailyRent}, {basePricePerKm}, {stationWagonRate}, {truckRate}, {baseCost}. Total {cost} kr.");
-
-    return cost;
-}
