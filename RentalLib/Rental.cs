@@ -1,31 +1,46 @@
 ﻿namespace RentalLib;
 
-public class Rental
+public class Rental : IRental
 {
-    public string BookingNumber { get; }
-    public string LicensePlateNumber { get; set; } // maybe better to store the whole car?
+    public string? BookingNumber { get; private set; }
+    public string CarLicensePlateNumber { get; set; }
     public string CustomerID { get; set; }
-    public CarType carType;
-    //public Car Car { get; set; }
+    public CarType CarType { get; set; }
     public DateTime PickUpDate { get; set; }
-    public uint TravelledKilometersBeforeRent { get; }
+    public uint TravelledKilometersBeforeRent { get; private set; }
 
     // used for calculating cost
-    public int daysRented { get; set; }
-    public uint totalKm { get; set; }
+    public int DaysRented { get; set; }
+    public uint TotalKm { get; set; }
+
+    public Rental()
+    {
+        BookingNumber = null;
+    }
 
 // Begin rental / pick-up
-    public Rental(Car car, string customerID)
+    public Rental(ICar car, string customerID)
     {
         BookingNumber = $"{car.LicensePlateNumber}-{car.OdometerReading}";
     }
 
-    public Rental(string customerID, Car car)
+    public Rental(string customerID, ICar car)
     {
         BookingNumber = $"{car.LicensePlateNumber}-{car.OdometerReading}";
-        LicensePlateNumber = car.LicensePlateNumber;
+        CarLicensePlateNumber = car.LicensePlateNumber;
         CustomerID = customerID;
-        carType = car.Type;
+        CarType = car.Type;
+        PickUpDate = DateTime.Now;
+        TravelledKilometersBeforeRent = car.OdometerReading;
+    }
+
+    public void PickUp(ICar car, string customerID)
+    {
+        BookingNumber = $"{car.LicensePlateNumber}-{car.OdometerReading}";
+
+        CarLicensePlateNumber = car.LicensePlateNumber;
+        CustomerID = customerID;
+        CarType = car.Type;
         PickUpDate = DateTime.Now;
         TravelledKilometersBeforeRent = car.OdometerReading;
     }
@@ -33,7 +48,7 @@ public class Rental
 // End rental / drop-off
     public void DropOffCar(DateTime dropOff, uint travelledKilometersAfterRent)
     {
-        daysRented = (dropOff - PickUpDate).Days;
-        totalKm = travelledKilometersAfterRent - TravelledKilometersBeforeRent;
+        DaysRented = (dropOff - PickUpDate).Days;
+        TotalKm = travelledKilometersAfterRent - TravelledKilometersBeforeRent;
     }
 }

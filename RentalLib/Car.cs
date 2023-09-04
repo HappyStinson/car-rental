@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace RentalLib;
 
 public enum CarType
@@ -7,20 +9,20 @@ public enum CarType
     Truck
 }
 
-public class Car
+public class Car : ICar
 {
-    // fields
-
-    // 
-
-
-
-    // read-only reg nummer ABC123 eller DEF456G
-    public string LicensePlateNumber { get; }
-    public uint OdometerReading { get; } // not possible to change externally only from within the car via method
-    public static readonly string CarTypeString = "Småbil"; // perhaps delete
-    public CarType Type;
+    public string? LicensePlateNumber { get; private set; }
+    public uint OdometerReading { get; private set; }
+    public CarType Type { get; set; }
     
+    public Car()
+    {
+        LicensePlateNumber = null;
+        OdometerReading = 0;
+        Type = CarType.Car;
+    }
+
+    // not use this one in factory?   
     public Car(string licensePlateNumber, uint odometerReading = 0, CarType type = CarType.Car)
     {
         LicensePlateNumber = licensePlateNumber; // check correct format
@@ -28,7 +30,19 @@ public class Car
         Type = type;
     }
 
-    // public void AddDistanceToOdometer(uint distance) => OdometerReading += distance;
+    public void SetLicensePlateNumber(string licensePlateNumber)
+    {
+        if (LicensePlateNumber == null)
+        {
+            // Valid Swedish formats are ABC123 and ABC12D (excluding O)
+            Regex formatChecker = new(@"^[A-Za-z]{3}\d{2,3}[A-Za-z^oO]?$", RegexOptions.IgnoreCase);
+            if (formatChecker.IsMatch(licensePlateNumber))
+            {
+                LicensePlateNumber = licensePlateNumber;
+            }
+        }
+    }
+    public void AddDistanceToOdometer(uint distance) => OdometerReading += distance;
     
     public virtual string CarInfo()
     {
