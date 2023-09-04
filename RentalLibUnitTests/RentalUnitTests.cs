@@ -5,14 +5,17 @@ namespace RentalLibUnitTests;
 public class RentalUnitTests
 {
     [Fact]
-    public void TestPrintHello()
+    public void TestNewRentalCreatesBookingNumber()
     {
         // arrange
-        string expected = "Hello from RentalLib";
-        Rental rental = new();
+        var licensePlateNumber = "ABC123";
+        var customerID = "9005071234";
+        Car car = new(licensePlateNumber);
+        var expected = "ABC123-0";
+        Rental rental = new(customerID, car);
 
         // act
-        string actual = rental.Hello();
+        var actual = rental.BookingNumber;
 
         // assert
         Assert.Equal(expected, actual);
