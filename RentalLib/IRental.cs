@@ -16,6 +16,4 @@ public interface IRental
     public void PickUp(ICar car, string customerID);
 
     public void DropOffCar(DateTime dropOff, uint travelledKilometersAfterRent);
-
-    // private int CalculateCost ?
 }
